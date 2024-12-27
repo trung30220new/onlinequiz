@@ -25,12 +25,8 @@
       z-index: 1;
     }
 
-    .left_area h3 {
+    .left_area {
       color: #fff;
-      margin: 0px;
-      text-transform: uppercase;
-      font-size: 22px;
-      font-weight: 900;
     }
 
     .left_area span {
@@ -42,7 +38,7 @@
       background: #19B3D3;
       text-decoration: none;
       float: right;
-      margin-top: -30px;
+      margin-top: -38px;
       margin-right: 40px;
       border-radius: 2px;
       font-size: 15px;
@@ -87,7 +83,7 @@
       width: 100%;
       line-height: 60px;
       text-decoration: none;
-      padding-left: 40px;
+      /* padding-left: 40px; */
       box-sizing: border-box;
       transition: 0.5s;
 
@@ -160,11 +156,8 @@
   <input type="checkbox" id="check">
   <!--header area start-->
   <header>
-    <label for="check">
-      <i style="left: 200px;margin-top: 17px;"class="fas fa-bars" id="sidebar_btn"></i>
-    </label>
     <div class="left_area">
-      <h3>Online Quiz</h3>
+      <h3>Quiz</h3>
     </div>
     <div class="right_area">
       <a href="/logout" class="logout_btn">Logout</a>
@@ -173,17 +166,17 @@
   <!--header area end-->
   <!--sidebar start-->
   <div class="sidebar">
+    <br/>
+    <br/>
     <center>
 
       <img src="{% static "image/student.png" %}" class="profile_image" alt="">
       <h4>{{request.user.first_name}}</h4>
       <h6 style="color: rgb(255, 255, 255);">( Student )</h6>
 
+      <a href="/student/student-dashboard"><span>Back</span></a>
     </center>
 
-    <a href="/student/student-dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
-    <a href="/student/student-exam"><i class="fas fa-book"></i><span>Exam</span></a>
-    <a href="/student/student-marks"><i class="fas fa-sort-numeric-up"></i><span>Marks</span></a>
   </div>
   <!--sidebar end-->
 

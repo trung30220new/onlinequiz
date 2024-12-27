@@ -1,19 +1,28 @@
-{%load static%}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    {% include "quiz/navbar.html" %}
-    <br><br><br><br><br>
-<img src="{% static "image/logout_img.png" %}"  style="width:800px; height:100px; padding-left:400px;">
 
-<br><br><br><br><br>
-<br><br><br><br><br>
-<br><br>
-{% include "quiz/footer.html" %}
+<style>
+  .jumbotron{
+    margin-bottom: 0px;
+  }
+</style>
+<body>
+  {% include "quiz/navbar.html" %}
+<br>
+<br/>
+<br/>
+<br/>
+<br/>
+<section id="section-jumbotron" class="jumbotron-fluid d-flex justify-content-center align-items-center">
+  <div class="container text-center">
+    <p class="display-4 d-none d-sm-block">You're logged out!</p>
+    <a href="/">Home</a>
+  </div>  
+</section>
+  {% include "quiz/footer.html" %}
 
-  </body>
+
+</body>
+
 </html>
