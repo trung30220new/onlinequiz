@@ -44,6 +44,7 @@ def is_student(user):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_dashboard_view(request):
+    print('here')
     dict = {
         'total_course': QMODEL.Course.objects.all().count(),
         'total_question': QMODEL.Question.objects.all().count(),

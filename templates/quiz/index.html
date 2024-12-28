@@ -19,7 +19,9 @@
     <h1 class="display-1 text-info">Group 5</h1>
     <p class="display-4 d-none d-sm-block">Project: Quiz System Management</p>
     <br/>
-    <a class="btn btn-primary btn-lg" href="/init" role="button">Initialize</a>
+    <button class="btn btn-primary btn-lg" onclick="fetch('/init').then(res => res.json()).then(console.log).catch(console.error)">
+      Initialize
+    </button>
     <br/>
     <br/>
     <a class="btn btn-primary btn-lg" href="/student/studentsignup" role="button">Register as Student</a>

@@ -323,14 +323,39 @@ def contactus_view(request):
 def info(request):
     users = User.objects.all()
     for u in users:
-        print(u.id)
-        print(u.pk)
-        print(u)
-    print('---')
+        print(str(u.id) + ' - ' + u.username)
+
+    print('---teacher')
     all = TMODEL.Teacher.objects.all()
     print('Size:' + str(len(all)))
     for e in all:
         print(e)
+    # TeacherCourse
+
+    print('---student')
+    all = SMODEL.Student.objects.all()
+    print('Size:' + str(len(all)))
+    for e in all:
+        print(e)
+
+    print('---course')
+    all = models.Course.objects.all()
+    print('Size:' + str(len(all)))
+    for e in all:
+        print(e)
+
+    print('---question')
+    all = models.Question.objects.all()
+    print('Size:' + str(len(all)))
+    for e in all:
+        print(e)
+
+    print('---result')
+    all = models.Result.objects.all()
+    print('Size:' + str(len(all)))
+    for e in all:
+        print(e)
+
     return HttpResponse("Success")
 
 
@@ -348,6 +373,7 @@ def destroy(request):
 
 
 def init(request):
+    info(request)
     username = 'teacher'
     password = '123456'
     email = 'test@gmail.com'
