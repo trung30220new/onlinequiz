@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.shortcuts import render,redirect,reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -160,6 +161,18 @@ def teacher_gen_form_view(request):
     return render(request,'teacher/teacher_gen.html',{'questionForm':questionForm})
 
 
+def gen_exam(exam):
+    course = exam.course
+    questions = QMODEL.Question.objects.filter(course_id=course.id)
+    exam.ques = [q.id for q in questions]  # Collect question IDs in a single line
+    random.shuffle(exam.ques)  # Shuffle the list of question IDs
+
+    # Debugging information
+    print(f'Number of questions: {exam.number_of_ques}')
+    print(f'Total questions: {len(questions)}')
+    print(f'Question IDs generated: {exam.ques}')
+
+
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_add_exam_detail_view(request, course_id):
@@ -176,6 +189,7 @@ def teacher_add_exam_detail_view(request, course_id):
             exam = exam_form.save(commit=False)
             exam.ques = [1,2,3]
             exam.course = course
+            gen_exam(exam)
             print(f'testttttt {course}')
             # Print all fields with their errors and values
             for field_name, field in exam_form.fields.items():
