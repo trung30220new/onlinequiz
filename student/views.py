@@ -44,19 +44,10 @@ def is_student(user):
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_dashboard_view(request):
-    print('here')
-    dict = {
-        'total_course': QMODEL.Course.objects.all().count(),
-        'total_question': QMODEL.Question.objects.all().count(),
-    }
-    return render(request, 'student/student_dashboard.html', context=dict)
-
-
-@login_required(login_url='studentlogin')
-@user_passes_test(is_student)
-def student_exam_view(request):
     courses = QMODEL.Course.objects.all()
-    return render(request, 'student/student_exam.html', {'courses': courses})
+    exams = QMODEL.Exam.objects.all()
+    return render(request, 'student/student_dashboard.html',
+                  {'courses': courses, 'exams': exams})
 
 
 @login_required(login_url='studentlogin')
@@ -68,8 +59,9 @@ def student_marks_view(request):
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
-def take_exam_view(request, pk):
-    course = QMODEL.Course.objects.get(id=pk)
+def take_exam_view(request, exam_id):
+    exam = QMODEL.Exam.objects.get(id=exam_id)
+    course = exam.course
     total_questions = QMODEL.Question.objects.all().filter(
         course=course).count()
     questions = QMODEL.Question.objects.all().filter(course=course)
@@ -80,6 +72,7 @@ def take_exam_view(request, pk):
     return render(
         request, 'student/take_exam.html', {
             'course': course,
+            'exam': exam,
             'total_questions': total_questions,
             'total_marks': total_marks
         })
@@ -87,25 +80,30 @@ def take_exam_view(request, pk):
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
-def start_exam_view(request, pk):
-    course = QMODEL.Course.objects.get(id=pk)
+def start_exam_view(request, exam_id):
+    print(f'exam id: {exam_id}')
+    exam = QMODEL.Exam.objects.get(id=exam_id)
+    course = exam.course
     questions = QMODEL.Question.objects.all().filter(course=course)
     if request.method == 'POST':
         pass
     response = render(request, 'student/start_exam.html', {
         'course': course,
+        'exam': exam,
         'questions': questions
     })
     response.set_cookie('course_id', course.id)
+    response.set_cookie('exam_id', exam.id)
     return response
 
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def calculate_marks_view(request):
-    if request.COOKIES.get('course_id') is not None:
-        course_id = request.COOKIES.get('course_id')
-        course = QMODEL.Course.objects.get(id=course_id)
+    if request.COOKIES.get('exam_id') is not None:
+        exam_id = request.COOKIES.get('exam_id')
+        exam = QMODEL.Exam.objects.get(id=exam_id)
+        course = exam.course
 
         total_marks = 0
         questions = QMODEL.Question.objects.all().filter(course=course)
@@ -118,7 +116,7 @@ def calculate_marks_view(request):
         student = models.Student.objects.get(user_id=request.user.id)
         result = QMODEL.Result()
         result.marks = total_marks
-        result.exam = course
+        result.exam = exam
         result.student = student
         result.save()
 
@@ -129,14 +127,21 @@ def calculate_marks_view(request):
 @user_passes_test(is_student)
 def view_result_view(request):
     courses = QMODEL.Course.objects.all()
-    return render(request, 'student/view_result.html', {'courses': courses})
+    exams = QMODEL.Exam.objects.all()
+    print(f'size {len(exams)}')
+    return render(request, 'student/view_result.html',
+                  {'courses': courses, 'exams': exams})
 
 
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
-def check_marks_view(request, pk):
+def check_marks_view(request, exam_id):
+    print(f'view {exam_id}')
+    exam = QMODEL.Exam.objects.get(id=exam_id)
+    pk = exam.course.id
     course = QMODEL.Course.objects.get(id=pk)
+    print(f'view {course}')
     student = models.Student.objects.get(user_id=request.user.id)
-    results = QMODEL.Result.objects.all().filter(exam=course).filter(
+    results = QMODEL.Result.objects.all().filter(exam=exam).filter(
         student=student)
     return render(request, 'student/check_marks.html', {'results': results})
