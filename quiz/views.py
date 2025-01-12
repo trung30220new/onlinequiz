@@ -344,6 +344,12 @@ def info(request):
     for e in all:
         print(e)
 
+    print('---exam')
+    all = models.Exam.objects.all()
+    print('Size:' + str(len(all)))
+    for e in all:
+        print(e)
+
     print('---question')
     all = models.Question.objects.all()
     print('Size:' + str(len(all)))

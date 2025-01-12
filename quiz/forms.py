@@ -26,3 +26,14 @@ class QuestionForm(forms.ModelForm):
         widgets = {
             'question': forms.Textarea(attrs={'rows': 3, 'cols': 50})
         }
+
+class ExamForm(forms.ModelForm):
+    ques = forms.CharField(required=False)  # Override field to make it optional
+    start = forms.DateTimeField(
+        widget=forms.DateTimeInput(format='%Y-%m-%d %H:%M'),
+        required=False
+    )
+
+    class Meta:
+        model=models.Exam
+        fields=['exam_code','duration_minutes','number_of_ques','ques','start']
