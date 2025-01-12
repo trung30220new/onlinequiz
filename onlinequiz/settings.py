@@ -147,3 +147,5 @@ EMAIL_HOST_PASSWORD = 'xyz'  # host email password required
 EMAIL_RECEIVING_USER = [
     'to@gmail.com'
 ]  # email on which you will receive messages sent from website
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
