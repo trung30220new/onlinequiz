@@ -1,8 +1,12 @@
+import json
+
 from django.shortcuts import render,redirect,reverse
+from django.views.decorators.csrf import csrf_exempt
+
 from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.conf import settings
 from datetime import date, timedelta
@@ -122,3 +126,74 @@ def remove_question_view(request,pk):
     question=QMODEL.Question.objects.get(id=pk)
     question.delete()
     return HttpResponseRedirect('/teacher/teacher-view-question')
+
+@login_required(login_url='teacherlogin')
+@user_passes_test(is_teacher)
+def teacher_gen_view(request):
+    courses= QMODEL.Course.objects.all()
+    questions= QMODEL.Question.objects.all()
+    return render(request,'teacher/teacher_gen.html',{'questions':questions,'courses':courses})
+
+
+@login_required(login_url='teacherlogin')
+@user_passes_test(is_teacher)
+def gen_exam_view(request,pk):
+    questionForm=QFORM.QuestionForm()
+    questions=QMODEL.Question.objects.all().filter(course_id=pk)
+    return render(request,'teacher/teacher_gen.html',{'questions':questions, 'questionForm':questionForm})
+
+
+@login_required(login_url='teacherlogin')
+@user_passes_test(is_teacher)
+def teacher_gen_form_view(request):
+    questionForm=QFORM.QuestionForm()
+    if request.method=='POST':
+        questionForm=QFORM.QuestionForm(request.POST)
+        if questionForm.is_valid():
+            question=questionForm.save(commit=False)
+            course=QMODEL.Course.objects.get(id=request.POST.get('courseID'))
+            question.course=course
+            question.save()
+        else:
+            print("form is invalid")
+        return HttpResponseRedirect('teacher/teacher_gen')
+    return render(request,'teacher/teacher_gen.html',{'questionForm':questionForm})
+
+
+@login_required(login_url='teacherlogin')
+@user_passes_test(is_teacher)
+def teacher_add_exam_detail_view(request, course_id):
+    print(f'course_id {course_id}')
+    questions=QMODEL.Question.objects.all().filter(course_id=course_id)
+    exams = QMODEL.Exam.objects.all()
+    exam_form=QFORM.ExamForm()
+    course=QMODEL.Course.objects.get(id=course_id)
+    print(f'test {course}')
+    if request.method=='POST':
+        exam_form=QFORM.ExamForm(request.POST)
+        if exam_form.is_valid():
+            # exam_form.save()
+            exam = exam_form.save(commit=False)
+            exam.ques = [1,2,3]
+            exam.course = course
+            print(f'testttttt {course}')
+            # Print all fields with their errors and values
+            for field_name, field in exam_form.fields.items():
+                print(f"Field: {field_name}")
+                print(f"Value: {exam_form.data.get(field_name)}")  # The submitted value
+                print(f"Errors: {exam_form.errors.get(field_name, [])}")  # Errors for the field
+            exam.save()
+            print(exam_form)
+        else:
+            print("form is invalid")
+            print("Errors:", exam_form.errors)  # Print field-specific errors
+            print("Non-field errors:", exam_form.non_field_errors())  # Print non-field errors
+
+            # Print all fields with their errors and values
+            for field_name, field in exam_form.fields.items():
+                print(f"Field: {field_name}")
+                print(f"Value: {exam_form.data.get(field_name)}")  # The submitted value
+                print(f"Errors: {exam_form.errors.get(field_name, [])}")  # Errors for the field
+        return HttpResponseRedirect('/teacher/teacher-view-exam')
+    return render(request,'teacher/teacher_add_exam_detail.html',
+                  {'exam_form':exam_form, 'questions':questions, 'exams': exams, 'course':course})
