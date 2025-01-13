@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from . import forms, models
-from django.db.models import Sum
+from django.db.models import Sum, Case, When, IntegerField, Value
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -84,7 +84,14 @@ def start_exam_view(request, exam_id):
     print(f'exam id: {exam_id}')
     exam = QMODEL.Exam.objects.get(id=exam_id)
     course = exam.course
-    questions = QMODEL.Question.objects.all().filter(course=course)
+    # questions = QMODEL.Question.objects.all().filter(id__in=exam.ques)
+    # Assuming exam.ques is a list of question IDs in the desired order
+    questions = QMODEL.Question.objects.filter(id__in=exam.ques).annotate(
+        order=Case(
+            *[When(id=id, then=Value(i)) for i, id in enumerate(exam.ques)],
+            output_field=IntegerField()
+        )
+    ).order_by('order')
     if request.method == 'POST':
         pass
     response = render(request, 'student/start_exam.html', {
