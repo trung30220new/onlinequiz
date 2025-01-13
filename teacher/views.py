@@ -163,9 +163,13 @@ def teacher_gen_form_view(request):
 
 def gen_exam(exam):
     course = exam.course
+    size = exam.number_of_ques
     questions = QMODEL.Question.objects.filter(course_id=course.id)
     exam.ques = [q.id for q in questions]  # Collect question IDs in a single line
     random.shuffle(exam.ques)  # Shuffle the list of question IDs
+
+    # Slice the list to match the number of questions required
+    exam.ques = exam.ques[:size]
 
     # Debugging information
     print(f'Number of questions: {exam.number_of_ques}')
