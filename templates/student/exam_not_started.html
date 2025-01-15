@@ -1,0 +1,40 @@
+{% extends 'student/studentbase.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+</head>
+<br><br>
+<div class="container my-4">
+    <div class="jumbotron">
+
+	      <h3 class="text-info text-center">Exam Not Started</h3>
+
+        <div class="row">
+
+            <div class="card border-info mx-4 my-4">
+                <div class="card-body text-info">
+
+                    <p class="card-text">
+
+                        <p>The exam "<strong>{{ exam.exam_code }}</strong>" has not started yet.</p>
+                        <p>Start Time: {{ exam.start|date:"F j, Y, g:i a" }}</p>
+                        <p>Please check back at the specified time.</p>
+
+                    </p>
+                </div>
+            </div>
+
+        <!-- Back Button -->
+        <button onclick="history.back()" class="btn btn-info">Back</button>
+
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+{% endblock content %}
