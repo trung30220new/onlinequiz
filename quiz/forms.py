@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 from . import models
 
 class ContactusForm(forms.Form):
@@ -37,3 +39,14 @@ class ExamForm(forms.ModelForm):
     class Meta:
         model=models.Exam
         fields=['exam_code','duration_minutes','number_of_ques','ques','start']
+
+    def clean_start(self):
+        start = self.cleaned_data.get('start')
+        if start:
+            # Ensure the datetime is timezone-aware
+            if timezone.is_naive(start):
+                # Convert naive datetime to the current time zone
+                start = timezone.make_aware(start, timezone.get_current_timezone())
+            # Convert to local time (this step may be redundant if already in local time)
+            start = timezone.localtime(start)
+        return start
