@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, reverse
+from django.utils.timezone import now
+
 from . import forms, models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
@@ -85,6 +87,17 @@ def start_exam_view(request, exam_id):
     exam = QMODEL.Exam.objects.get(id=exam_id)
     course = exam.course
     questions = QMODEL.Question.objects.all().filter(course=course)
+
+    # Check if the current time is before the exam's start time
+    if exam.start is not None and now() < exam.start:
+        print(now())
+        print(exam.start)
+        print(request, "The exam has not started yet. Please check back later.")
+        return render(request, 'student/exam_not_started.html', {
+            'exam': exam,
+            'course': course,
+        })
+
     if request.method == 'POST':
         pass
     response = render(request, 'student/start_exam.html', {
