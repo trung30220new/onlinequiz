@@ -32,7 +32,7 @@
         <tr>
 
           <th>Question</th>
-         
+
           <th>Marks</th>
           <th>Delete Question</th>
         </tr>
@@ -40,11 +40,11 @@
       {% for c in questions %}
       <tr>
 
-        <td> {{c.question}}</td>
-        
+        <td><a href="{% url 'teacher-edit-question' c.id %}">{{c.question}}</a></td>
+
         <td>{{c.marks}}</td>
         <td><a class="btn btn-primary btn-xs" href="{% url 'remove-question' c.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-        
+
       </tr>
       {% endfor %}
     </table>

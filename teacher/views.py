@@ -4,6 +4,7 @@ import random
 from django.shortcuts import render,redirect,reverse
 from django.views.decorators.csrf import csrf_exempt
 
+from quiz.models import Question
 from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth.models import Group
@@ -50,7 +51,7 @@ def is_teacher(user):
 @user_passes_test(is_teacher)
 def teacher_dashboard_view(request):
     dict={
-    
+
     'total_course':QMODEL.Course.objects.all().count(),
     'total_question':QMODEL.Question.objects.all().count(),
     'total_student':SMODEL.Student.objects.all().count()
@@ -69,7 +70,7 @@ def teacher_add_exam_view(request):
     courseForm=QFORM.CourseForm()
     if request.method=='POST':
         courseForm=QFORM.CourseForm(request.POST)
-        if courseForm.is_valid():        
+        if courseForm.is_valid():
             courseForm.save()
         else:
             print("form is invalid")
@@ -103,11 +104,28 @@ def teacher_add_question_view(request):
             question=questionForm.save(commit=False)
             course=QMODEL.Course.objects.get(id=request.POST.get('courseID'))
             question.course=course
-            question.save()       
+            question.save()
         else:
             print("form is invalid")
         return HttpResponseRedirect('/teacher/teacher-view-question')
     return render(request,'teacher/teacher_add_question.html',{'questionForm':questionForm})
+
+@login_required(login_url='teacherlogin')
+@user_passes_test(is_teacher)
+def teacher_edit_question_view(request, question_id):
+    course = QMODEL.Question.objects.get(id=question_id).course
+    question = QMODEL.Question.objects.get(id=question_id)
+
+    if request.method=='POST':
+        question_form=QFORM.QuestionForm(request.POST, instance=question)
+        if question_form.is_valid():
+            question.save(force_update=True)
+        else:
+            print("form is invalid")
+        return HttpResponseRedirect('/teacher/teacher-view-question')
+
+    question_form = QFORM.QuestionForm(instance=question, initial={'courseID': course})
+    return render(request,'teacher/teacher_edit_question.html',{'questionForm':question_form})
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
