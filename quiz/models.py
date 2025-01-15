@@ -30,7 +30,7 @@ class Exam(models.Model):
     duration_minutes=models.PositiveIntegerField()
     number_of_ques=models.PositiveIntegerField(default=10)
     def __str__(self):
-        return 'exam: ' + str(self.id) + ' ' + str(self.exam_code) + ' ' + str(self.duration_minutes)
+        return 'exam: ' + str(self.id) + ' ' + str(self.exam_code) + ' ' + str(self.duration_minutes) + ' ' + str(self.start)
 
 class Result(models.Model):
     student = models.ForeignKey(Student,on_delete=models.CASCADE)
