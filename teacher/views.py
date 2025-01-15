@@ -2,7 +2,9 @@ import json
 import random
 
 from django.shortcuts import render,redirect,reverse
+from django.utils.timezone import make_aware
 from django.views.decorators.csrf import csrf_exempt
+from pytz import timezone
 
 from quiz.models import Question
 from . import forms,models
@@ -214,6 +216,15 @@ def teacher_add_exam_detail_view(request, course_id):
                 print(f"Field: {field_name}")
                 print(f"Value: {exam_form.data.get(field_name)}")  # The submitted value
                 print(f"Errors: {exam_form.errors.get(field_name, [])}")  # Errors for the field
+
+            # change timezone
+            local_tz = timezone('Asia/Ho_Chi_Minh')  # Replace with your desired timezone
+
+            # # Convert start time to the desired timezone
+            # if exam.start: # and not exam.start.tzinfo:
+            #     exam.start = make_aware(exam.start).astimezone(local_tz)
+            #     print(f'ok: {exam.start}')
+
             exam.save()
             print(exam_form)
         else:
