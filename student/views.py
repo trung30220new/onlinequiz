@@ -88,15 +88,24 @@ def start_exam_view(request, exam_id):
     course = exam.course
     questions = QMODEL.Question.objects.all().filter(course=course)
 
+    # Calculate the expiration time
+    exam_end_time = exam.start + timedelta(minutes=exam.duration_minutes)
+
     # Check if the current time is before the exam's start time
-    if exam.start is not None and now() < exam.start:
-        print(now())
-        print(exam.start)
-        print(request, "The exam has not started yet. Please check back later.")
-        return render(request, 'student/exam_not_started.html', {
-            'exam': exam,
-            'course': course,
-        })
+    if exam.start is not None:
+        if now() < exam.start:
+            print(now())
+            print(exam.start)
+            print(request, "The exam has not started yet. Please check back later.")
+            return render(request, 'student/exam_not_started.html', {
+                'exam': exam,
+                'course': course,
+            })
+        elif now() > exam_end_time:
+            return render(request, 'student/exam_expired.html', {
+                'exam': exam,
+                'course': course,
+            })
 
     delta = now() - exam.start
     # Calculate delta in minutes
