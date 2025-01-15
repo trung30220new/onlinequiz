@@ -149,3 +149,6 @@ EMAIL_RECEIVING_USER = [
 ]  # email on which you will receive messages sent from website
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+USE_TZ = True  # Ensure that timezone support is enabled
+TIME_ZONE = 'Asia/Bangkok'  # Set your default timezone (adjust as needed)
