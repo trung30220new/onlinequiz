@@ -28,6 +28,9 @@
       <label for="question_number">Duration Minutes</label>
       {% render_field exam_form.duration_minutes class="form-control" placeholder="60" %}
 
+      <label for="question_number">Duration Minutes</label>
+      {% render_field exam_form.start class="form-control" placeholder="2025-01-15 11:45" %}
+
       <label for="total_marks">Number of Question (Max: {{ questions|length }} ques)</label>
       {% render_field exam_form.number_of_ques class="form-control" placeholder="60" %}
     </div>
