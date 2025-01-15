@@ -98,12 +98,18 @@ def start_exam_view(request, exam_id):
             'course': course,
         })
 
+    delta = now() - exam.start
+    # Calculate delta in minutes
+    minutes = round(delta.total_seconds() / 60, 2)
+    print(f"Delta in minutes: {minutes}")
+
     if request.method == 'POST':
         pass
     response = render(request, 'student/start_exam.html', {
         'course': course,
         'exam': exam,
-        'questions': questions
+        'questions': questions,
+        'minutes': minutes
     })
     response.set_cookie('course_id', course.id)
     response.set_cookie('exam_id', exam.id)
@@ -116,6 +122,15 @@ def calculate_marks_view(request):
     if request.COOKIES.get('exam_id') is not None:
         exam_id = request.COOKIES.get('exam_id')
         exam = QMODEL.Exam.objects.get(id=exam_id)
+
+        # Calculate the expiration time
+        exam_end_time = exam.start + timedelta(minutes=exam.duration_minutes)
+
+        if now() > exam_end_time:
+            return render(request, 'student/exam_expired.html', {
+                'exam': exam,
+            })
+
         course = exam.course
 
         total_marks = 0
